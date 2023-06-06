@@ -1,6 +1,6 @@
 {
   "name": "@vitali177_tickets/common",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "",
   "main": "./build/index.js",
   "types": "./build/index.d.ts",
@@ -8,7 +8,8 @@
     "build/**/*"
   ],
   "scripts": {
-    "build": "tsc"
+    "build": "tsc",
+    "pub": "git add . && git commit -m \"Updates\" && npm version patch && npm run build && npm publish"
   },
   "keywords": [],
   "author": "",
