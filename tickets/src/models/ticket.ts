@@ -22,12 +22,16 @@ interface TicketDoc extends mongoose.Document {
   userId: string;
 }
 
-const userSchema = new mongoose.Schema({
-  email: {
+const ticketSchema = new mongoose.Schema({
+  title: {
     type: String,
     required: true
   },
-  password: {
+  price: {
+    type: Number,
+    required: true
+  },
+  userId: {
     type: String,
     required: true
   }
@@ -36,26 +40,14 @@ const userSchema = new mongoose.Schema({
     transform(doc, ret) {
       ret.id = ret._id;
       delete ret._id;
-      delete ret.password;
-      delete ret.__v;
     }
   }
-}
-
-);
-
-userSchema.pre('save', async function name(done) {
-  if (this.isModified('password')) {
-    const hashed = await Password.toHash(this.get('password'));
-    this.set('password', hashed);
-  }
-  done();
 });
 
-userSchema.statics.build = (attrs: UserAttrs) => {
-  return new User(attrs);
+ticketSchema.statics.build = (attrs: TicketAttrs) => {
+  return new Ticket(attrs);
 }
 
-const User = mongoose.model<UserDoc, UserModel>('User', userSchema);
+const Ticket = mongoose.model<TicketDoc, TicketModel>('Ticket', ticketSchema);
 
-export { User };
+export { Ticket };
