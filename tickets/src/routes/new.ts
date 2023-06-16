@@ -18,10 +18,10 @@ router.post('/api/tickets', requireAuth, [
     userId: req.currentUser!.id
   });
   await ticket.save();
-  new TicketCreatedPublisher(client).publish({
-    id: ticket.id,
-    ...ticket
-  });
+  // new TicketCreatedPublisher(client).publish({
+  //   id: ticket.id,
+  //   ...ticket
+  // });
 
   return res.status(201).send(ticket);
 });
