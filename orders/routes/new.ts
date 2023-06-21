@@ -1,9 +1,11 @@
-import mongoose, { mongo } from 'mongoose';
+import mongoose from 'mongoose';
 import express, { Request, Response } from 'express';
 import { BadRequestError, NotFoundError, OrderStatus, requireAuth, validateRequest } from '@vitali177_tickets/common';
 import { body } from 'express-validator';
 import { Ticket } from '../src/models/ticket';
 import { Order } from '../src/models/order';
+
+const EXPIRATION_WINDOW_SECONDS = 15 * 60;
 
 const router = express.Router();
 
@@ -24,7 +26,13 @@ router.post('/api/orders', requireAuth, [
       throw new BadRequestError('Ticket is already reserved');
     }
 
-    return res.send({});
+    const expiration = new Date();
+    expiration.setSeconds(expiration.getSeconds() + EXPIRATION_WINDOW_SECONDS);
+
+    const order = Order.build({ userId: req.currentUser!.id, status: OrderStatus.Created, expiresAt: expiration, ticket: ticket });
+    await order.save();
+
+    return res.status(201).send(order);
   }
 );
 
