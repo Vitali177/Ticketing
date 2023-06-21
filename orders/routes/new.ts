@@ -1,7 +1,9 @@
 import mongoose, { mongo } from 'mongoose';
 import express, { Request, Response } from 'express';
-import { requireAuth, validateRequest } from '@vitali177_tickets/common';
+import { NotFoundError, requireAuth, validateRequest } from '@vitali177_tickets/common';
 import { body } from 'express-validator';
+import { Ticket } from '../src/models/ticket';
+import { Order } from '../src/models/order';
 
 const router = express.Router();
 
@@ -10,6 +12,13 @@ router.post('/api/orders', requireAuth, [
 ],
   validateRequest,
   async (req: Request, res: Response) => {
+    const { ticketId } = req.body;
+
+    const ticket = await Ticket.findById(ticketId);
+    if (!ticket) {
+      throw new NotFoundError();
+    }
+
     return res.send({});
   }
 );
