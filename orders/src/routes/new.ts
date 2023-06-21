@@ -2,8 +2,8 @@ import mongoose from 'mongoose';
 import express, { Request, Response } from 'express';
 import { BadRequestError, NotFoundError, OrderStatus, requireAuth, validateRequest } from '@vitali177_tickets/common';
 import { body } from 'express-validator';
-import { Ticket } from '../src/models/ticket';
-import { Order } from '../src/models/order';
+import { Ticket } from '../models/ticket';
+import { Order } from '../models/order';
 
 const EXPIRATION_WINDOW_SECONDS = 15 * 60;
 

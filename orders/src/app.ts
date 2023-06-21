@@ -4,10 +4,10 @@ import { json } from 'body-parser';
 import cookieSession from 'cookie-session';
 import { errorHandler, NotFoundError, currentUser } from '@vitali177_tickets/common';
 
-import { newOrderRouter } from '../routes/new';
-import { showOrderRouter } from '../routes/show';
-import { deleteOrderRouter } from '../routes/delete';
-import { indexOrderRouter } from '../routes';
+import { newOrderRouter } from './routes/new';
+import { showOrderRouter } from './routes/show';
+import { deleteOrderRouter } from './routes/delete';
+import { indexOrderRouter } from './routes';
 
 const app = express();
 app.set('trust proxy', true);
