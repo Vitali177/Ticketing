@@ -22,7 +22,9 @@ router.post('/api/tickets', requireAuth, [
   new TicketCreatedPublisher(natsWrapper.client).publish({
     id: ticket.id,
     title: ticket.title,
-    price: ticket.price
+    price: ticket.price,
+    version: ticket.version,
+    userId: ticket.userId
   });
 
   return res.status(201).send(ticket);
