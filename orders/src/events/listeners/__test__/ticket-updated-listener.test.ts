@@ -9,9 +9,11 @@ const setup = async () => {
   // creates a listener
   const listener = new TicketUpdatedListener(natsWrapper.client);
 
+  const id = new mongoose.Types.ObjectId().toHexString();
+
   // create and save a ticket
   const ticket = Ticket.build({
-    id: new mongoose.Types.ObjectId().toHexString(),
+    id,
     title: 'concert',
     price: 20
   });
@@ -19,7 +21,7 @@ const setup = async () => {
 
   // create a fake data object
   const data: TicketUpdatedEvent['data'] = {
-    id: new mongoose.Types.ObjectId().toHexString(),
+    id,
     version: ticket.version + 1,
     title: 'new concert',
     price: 999,
@@ -37,9 +39,18 @@ const setup = async () => {
 };
 
 it('finds , updates and saves a ticket', async () => {
+  const { msg, data, ticket, listener } = await setup();
+  await listener.onMessage(data, msg);
+  const updatedTicket = await Ticket.findById(ticket.id);
 
+  expect(updatedTicket!.title).toEqual(data.title);
+  expect(updatedTicket!.price).toEqual(data.price);
+  expect(updatedTicket!.version).toEqual(data.version);
 });
 
 it('acks the message', async () => {
+  const { msg, data, listener } = await setup();
+  await listener.onMessage(data, msg);
 
+  expect(msg.ack).toHaveBeenCalled();
 });
