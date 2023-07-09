@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
 import { Message } from 'node-nats-streaming';
-import { OrderCreatedEvent, OrderStatus } from '@vitali177_tickets/common';
+import { OrderCreatedEvent, OrderStatus, Subjects } from '@vitali177_tickets/common';
 import { natsWrapper } from '../../../nats-wrapper';
 import { Ticket } from '../../../models/ticket';
 import { OrderCreatedListener } from '../order-created-listener';
@@ -52,4 +52,13 @@ it('acks the message', async () => {
   await listener.onMessage(data, msg);
 
   expect(msg.ack).toHaveBeenCalled();
+});
+
+it('publishes a ticket updated event', async () => {
+  const { listener, data, msg } = await setup();
+  await listener.onMessage(data, msg);
+
+  expect(natsWrapper.client.publish).toHaveBeenCalled();
+  const ticketUpdatedEventName = (natsWrapper.client.publish as jest.Mock).mock.calls[0][0];
+  expect(ticketUpdatedEventName).toEqual(Subjects.TicketUpdated);
 });
