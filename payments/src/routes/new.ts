@@ -1,6 +1,6 @@
 import express, { Request, Response } from 'express';
 import { body } from 'express-validator';
-import { requireAuth, validateRequest, BadRequestError, NotFoundError } from '@vitali177_tickets/common';
+import { requireAuth, validateRequest, BadRequestError, NotFoundError, NotAuthorizedError, OrderStatus } from '@vitali177_tickets/common';
 import { Order } from '../models/order';
 
 const router = express.Router();
@@ -12,7 +12,23 @@ router.post('/api/payments',
     body('orderId').not().isEmpty()
   ],
   validateRequest,
-  (req: Request, res: Response) => {
+  async (req: Request, res: Response) => {
+    const { token, orderId } = req.body;
+
+    const order = await Order.findById(orderId);
+
+    if (!order) {
+      throw new NotFoundError();
+    }
+
+    if (order.userId !== req.currentUser!.id) {
+      throw new NotAuthorizedError();
+    }
+
+    if (order.status === OrderStatus.Cancelled) {
+      throw new BadRequestError('Cannot pay for an cancelled order');
+    }
+
     return res.send({ success: true });
   }
 );
