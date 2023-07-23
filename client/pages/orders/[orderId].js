@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
+import StripeCheckout from 'react-stripe-checkout';
 
-const OrderShow = ({ order }) => {
+const OrderShow = ({ order, currentUser }) => {
   const [timeLeft, setTimeLeft] = useState(0);
 
   useEffect(() => {
@@ -22,7 +23,15 @@ const OrderShow = ({ order }) => {
   }, []);
 
   return (
-    <div>Time left to pay: {timeLeft} seconds</div>
+    <div>
+      Time left to pay: {timeLeft} seconds
+      <StripeCheckout
+        token={(token) => console.log(token)}
+        stripeKey='pk_test_51Io4CqKgSJp0Lmj6jVwEaKGOo8W3p2wk7cWKWW9qrstsa1P25roHfX2kJP78DMXh1IFIR0n0LSS5qEhU6PO36GzM00YIncwiYg'
+        amount={order.ticket.price * 100}
+        email={currentUser.email}
+      />
+    </div>
   );
 };
 
