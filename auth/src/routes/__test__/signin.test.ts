@@ -12,6 +12,8 @@ it('fails when a mail that does not exists is supplied', async () => {
 });
 
 it('fails when an incorrect password is supplied', async () => {
+  process.env.JWT_KEY = 'asdfasdf';
+
   await request(app)
     .post('/api/users/signup')
     .send({
@@ -33,7 +35,7 @@ it('responds with a cookie when given valid credentials', async () => {
   await request(app)
     .post('/api/users/signup')
     .send({
-      email: 'test123@test.com',
+      email: 'test@test.com',
       password: 'password'
     })
     .expect(201);
@@ -41,7 +43,7 @@ it('responds with a cookie when given valid credentials', async () => {
   const response = await request(app)
     .post('/api/users/signin')
     .send({
-      email: 'test123@test.com',
+      email: 'test@test.com',
       password: 'password'
     })
     .expect(200);
